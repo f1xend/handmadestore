@@ -1,0 +1,10 @@
+*.env
+/venv/
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/online-store.iml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
+/db.sqlite3

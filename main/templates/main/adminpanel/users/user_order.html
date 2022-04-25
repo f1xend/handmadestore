@@ -1,0 +1,67 @@
+{% extends 'main/base_admin.html' %}
+{% load static %}
+
+{% block title %}
+   Заказ № {{ order.pk }}
+{% endblock %}
+
+{% block content %}
+<section class="mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class=" card order-card">
+                  <div class="card-body">
+                    <h1 class="card-title text-center title-order"><strong>Заказ №{{ order.pk }}</strong></h1>
+                    <h5 class="card-text">Дата заказа: <strong>{{ order.date_created }}</strong></h5>
+                    <h5 class="card-text">
+                        Трек-номер отслеживания (СДЕК/Почта России):
+                        {% if not order.track_num %}
+                            <small>информация появится позже</small>
+                        {% else %}
+                            <strong>{{ order.track_num }}</strong>
+                        {% endif %}
+                    </h5>
+                      <div class="col">
+                          <hr>
+                          <h4 class="mt-2">Состав заказа: </h4>
+                          <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">{{ forloop.counter}}</th>
+                                  <th scope="col">Наименование</th>
+                                  <th scope="col">Стоимость ₽</th>
+                                  <th scope="col">Количество</th>
+                                  <th scope="col">Сумма ₽</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {% for product in products %}
+                                <tr>
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  <td>{{ product.product.title }}</td>
+                                  <td>
+                                      {% if product.cost_with_discount %}
+                                        {{ product.cost_with_discount }}
+                                      {% else %}
+                                        {{ product.cost_without_discount }}
+                                      {% endif %}
+                                  </td>
+                                  <td>{{ product.quantity }}</td>
+                                  <td>{{ product.final_cost }}</td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                        <div class="col mt-5">
+                            <h3>Сумма заказа: {{ order.amount }} ₽</h3>
+                        </div>
+                      </div>
+                      <div class="col"><a href="{% url 'admin_panel_user_orders_url' pk=order.user.pk %}" class="btn btn-my btn-sm float-end mb-2">Назад</a></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

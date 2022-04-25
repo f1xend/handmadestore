@@ -1,0 +1,29 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+   Личный кабинет | {{ request.user.surname }} {{ request.user.first_name }}
+{% endblock %}
+
+{% block add_nav_link %}
+
+{% endblock %}
+
+{% block content %}
+<section class="mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="mt-5 col text-center">
+              <div class="jumbotron">
+                <h1 class="display-4">{{ user.surname }} {{ user.first_name }}</h1>
+                <hr class="my-4">
+                <p class="lead">Контактный номер телефона: {{ user.phone_number }}</p>
+                <p class="lead">
+                  <a class="btn btn-my btn-lg" href="{% url 'user_page_update_info_url' %}" role="button">Изменить информацию о себе</a>
+                </p>
+              </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

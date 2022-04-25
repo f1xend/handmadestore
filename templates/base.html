@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" type="image/png" href="{% static 'main\favicon.ico' %}"/>
+    <link type="text/css" href="{% static 'main\css\bootstrap5\bootstrap.min.css' %}" rel="stylesheet">
+    <link type="text/css" href="{% static 'main\css\main.css' %}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    {% block head %}
+
+    {% endblock %}
+    <title>
+        {% block title %}
+        {% endblock %}
+    </title>
+</head>
+<body>
+    <section class="">
+    <nav class="navbar navbar-expand-lg navbar-light bg-nav-my">
+  <div class="container-fluid">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+      <a class="navbar-brand" href="{% url 'main_url' %}">"Хенд-Мейд"</a>
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="{% url 'main_url' %}">На главную</a>
+          </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Каталог
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  {% for category in categories %}
+                    <li><a class="dropdown-item" href="{% url 'product_list_url' pk=category.pk %}">{{ category.title }}</a></li>
+                  {% endfor %}
+              </ul>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'delivery_url' %}">Доставка</a>
+          </li>
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'about_us_url' %}">О нас</a>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'user_page_url' %}">Мои заказы</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+              <a class="nav-link" href="{% url 'user_page_url' %}">Личный кабинет</a>
+          </li>
+          {% endif %}
+          {% block add_nav_link %}
+
+          {% endblock %}
+      </ul>
+        {% if request.user.is_authenticated %}
+            {% block user %}
+            <p class="text-dark m-0"><a class="my-link" href="{% url 'user_page_info_url' %}">{{ request.user.email }}</a></p>
+            {% endblock %}
+        {% endif %}
+
+        {% if request.user.is_superuser %}
+         <a class="nav-link my-link" href="{% url 'admin_panel_url' %}">Админ панель</a>
+        {% endif %}
+
+        {% if request.user.is_authenticated %}
+        <a class="nav-link my-link" href="{% url 'logout_url' %}">Выход</a>
+        <button class="btn btn-primary float-end trash-button" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasWithBothOptions" aria-controls="offcanvasWithBothOptions">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash2" viewBox="0 0 16 16">
+                <path d="M14 3a.702.702 0 0 1-.037.225l-1.684 10.104A2 2 0 0 1 10.305 15H5.694a2 2 0 0 1-1.973-1.671L2.037 3.225A.703.703 0 0 1 2 3c0-1.105 2.686-2 6-2s6 .895 6 2zM3.215 4.207l1.493 8.957a1 1 0 0 0 .986.836h4.612a1 1 0 0 0 .986-.836l1.493-8.957C11.69 4.689 9.954 5 8 5c-1.954 0-3.69-.311-4.785-.793z"></path>
+            </svg>
+        </button>
+        {% endif %}
+    </div>
+  </div>
+</nav>
+</section>
+{% block content %}
+
+{% endblock %}
+{% if request.user.is_authenticated %}
+    <div class="offcanvas offcanvas-end" data-bs-scroll="true" tabindex="-1" id="offcanvasWithBothOptions" aria-labelledby="offcanvasWithBothOptionsLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">Корзина</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            {% if products_in_sc %}
+            {% for product in products_in_sc %}
+            <div class="row">
+                <div class="col">
+                    <p class="mt-2">{{ product.product.title }} - {{ product.cost_without_discount }} ₽ за ед.</p>
+                </div>
+                <div class="col plus-minus">
+                    <form class="form-inline" action="{% url 'del_prod_in_sc_url' pk=product.product.pk %}" method="post">
+                        {% csrf_token %}
+                    </form>
+                    <form action="{% url 'edit_quan_prod_in_sc_url' pk=product.product.pk %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button type="button" class="minus-btn quantity-left-minus btn btn-danger btn-number"  data-type="minus" data-field="">
+                                    <span class="glyphicon glyphicon-minus">-</span>
+                                </button>
+                            </span>
+                            <input type="text" id="quantity" name="quantity" readonly class="form-control input-number" value="{{ product.quantity }}" min="1" max="20">
+                            <span class="input-group-btn">
+                                <button type="button" class="plus-btn quantity-right-plus btn btn-success btn-number" data-type="plus" data-field="">
+                                    <span class="glyphicon glyphicon-plus">+</span>
+                                </button>
+                            </span>
+                        </div>
+                        <input class="btn btn-my w-100 mt-2 mb-2" type="submit" value="Изменить">
+                    </form>
+                </div>
+                <div class="col-md-auto">
+                    <form class="form-inline" action="{% url 'del_prod_in_sc_url' pk=product.product.pk %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" class="btn btn-sm btn-danger float-end" value="X">
+                    </form>
+                </div>
+            </div>
+            <hr class="my-hr">
+            {% endfor %}
+            {% else %}
+            <p>Корзина пуста!</p>
+            {% endif %}
+        </div>
+        {% if products_in_sc %}
+        <div class="offcanvas-header">
+            <form class="form-inline" action="{% url 'create_order_url' %}" method="post">
+                {% csrf_token %}
+                <input class="m-2 btn btn-sm btn-my" type="submit" value="Оформить заказ">
+            </form>
+            <form class="form-inline" action="{% url 'del_all_prod_in_sc_url' %}" method="post">
+                {% csrf_token %}
+                <input class="m-2 btn btn-sm btn-danger" type="submit" value="Очистить">
+            </form>
+        </div>
+        {% endif %}
+    </div>
+{% endif %}
+
+
+</body>
+<script type="text/javascript"
+  src="https://code.jquery.com/jquery-3.6.0.slim.js"
+  integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY="
+  crossorigin="anonymous">
+
+</script>
+<script type="text/javascript" src="{% static 'main\js\bootstrap5\bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'main\js\main.js' %}"></script>
+{% block add_script %}
+
+{% endblock %}
+
+</html>

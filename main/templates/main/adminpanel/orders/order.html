@@ -1,0 +1,135 @@
+{% extends 'main/base_admin.html' %}
+{% load static %}
+
+{% block title %}
+   Админ-панель | Заказ {{ order.pk }}
+{% endblock %}
+
+{% block add_nav_link %}
+{% endblock %}
+
+{% block content %}
+<section class="mt-5 mb-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class=" card order-card">
+                  <div class="card-body">
+                    <h1 class="card-title text-center title-order"><strong>Заказ №{{ order.pk }}</strong></h1>
+                    <h5 class="card-text">Дата заказа: <strong>{{ order.date_created }}</strong></h5>
+                    {% if order.address %}
+                    <h5 class="card-text">Адрес доставки: <strong>{{ order.address }}</strong></h5>
+                      {% else %}
+                    <h5 class="card-text">Адрес доставки: <strong>не указан</strong></h5>
+                      {% endif %}
+                      {% if status.get_status_display %}
+                    <h5 class="card-text">Статус заказа: <strong>{{ status.get_status_display }}</strong><a class="btn btn-my btn-sm" data-bs-target="#change_status" data-bs-toggle="modal" type="button" href="#">Изменить статус</a></h5>
+                      {% else %}
+                    <h5 class="card-text">Статус заказа: <strong>не указан</strong></h5>
+                      {% endif %}
+                      <h5 class="card-text">
+                        Трек-номер отслеживания (СДЕК/Почта России):
+                        {% if not order.track_num %}
+                            <small>информация появится позже</small>
+                        {% else %}
+                            <strong>{{ order.track_num }}</strong>
+                        {% endif %}
+                        <a class="btn btn-my btn-sm" data-bs-target="#change_track_num" data-bs-toggle="modal" type="button" href="#">Изменить трек-номер</a>
+                    </h5>
+                      <div class="col">
+                          <hr>
+                          <h4 class="mt-2">Состав заказа: </h4>
+                          <table class="table">
+                              <thead>
+                                <tr>
+                                  <th scope="col">{{ forloop.counter}}</th>
+                                  <th scope="col">Наименование</th>
+                                  <th scope="col">Стоимость ₽</th>
+                                  <th scope="col">Количество</th>
+                                  <th scope="col">Сумма ₽</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                              {% for product in products %}
+                                <tr>
+                                  <th scope="row">{{ forloop.counter }}</th>
+                                  <td>{{ product.product.title }}</td>
+                                  <td>
+                                      {% if product.cost_with_discount %}
+                                        {{ product.cost_with_discount }}
+                                      {% else %}
+                                        {{ product.cost_without_discount }}
+                                      {% endif %}
+                                  </td>
+                                  <td>
+                                      {{ product.quantity }}
+                                      <a class="btn btn-my btn-sm usr" href="{% url 'edit_quan_order_url' pk=order.pk product=product.product.pk %}" role="button">Редактировать</a>
+                                  </td>
+                                  <td>{{ product.final_cost }}</td>
+                                </tr>
+                              {% endfor %}
+                              </tbody>
+                            </table>
+                        <div class="col mt-5">
+                            <h3>Сумма заказа: {{ order.amount }} ₽</h3>
+                        </div>
+                      </div>
+                      <div class="col"><a href="{% url 'admin_panel_orders_url' %}" class="btn btn-my btn-sm float-end mb-2">Назад</a></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="change_status" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Изменить статус</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row justify-content-center">
+              <div class="col-5">
+                 <form action="{% url 'set_status_order_url' pk=order.pk %}" method="post">
+                    {% csrf_token %}
+                    {{ form_status.as_p }}
+                    <button type="submit" class="btn btn-my w-100 mb-2">Сохранить</button>
+                 </form>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="change_track_num" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="track_num_title">Изменить трек-номер</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row justify-content-center">
+              <div class="col-5">
+                 <form action="{% url 'set_track_num_order_url' pk=order.pk %}" method="post">
+                    {% csrf_token %}
+                    {{ form_track_num.as_p }}
+                    <button type="submit" class="btn btn-my w-100 mb-2">Сохранить</button>
+                 </form>
+              </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+

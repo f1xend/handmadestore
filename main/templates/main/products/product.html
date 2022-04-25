@@ -1,0 +1,64 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ product.product.title }}
+{% endblock %}
+
+{% block content %}
+<section class="mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-10 mb-1">
+                <div class="card">
+                    {% if product.image %}
+                    <div class="img-news-detail">
+                        <a class="" data-bs-toggle="modal" data-bs-target="#myModal" href="#" role="button">
+                            <img src="{{ product.image.url }}" class="card-image card-img-top" alt="...">
+                        </a>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.product.title }}</h5>
+                        <p class="card-title"></p>
+                    </div>
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link na-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Описание</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link na-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Характеристики</button>
+                        </li>
+                    </ul>
+                    <div class="p-3 tab-content" id="myTabContent">
+                      <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                          <div class="col">
+                                <form action="{% url 'add_prod_in_sc_url' pk=product.product.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <input class="btn btn-my w-100 mb-2" type="submit" {% for p in products_in_sc %}{% if product.product.pk == p.product.pk %}disabled{% else %} {% endif %}{% endfor %} value="В корзину">
+                                </form>
+                            </div>
+                          <p class="mb-0">{{ product.product.description}}</p>
+                      </div>
+                      <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <!--{% for ch in product.product.characteristics %}
+                          <p class="mb-0">{{ ch }}</p>
+                        {% endfor %} -->
+                          <p class="mb-0">{{ product.product.characteristics}}</p>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body">
+          <img src="{{ product.image.url }}" class="img-modal" alt="...">
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

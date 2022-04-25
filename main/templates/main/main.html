@@ -1,0 +1,48 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+    Интернет магазин хенд-мейд товаров
+{% endblock %}
+
+{% block content %}
+<section class="">
+    <div class="container">
+        {% for elem in arr %}
+        <div class="row mt-3 mb-5 justify-content-center">
+            <div class="row">
+                <div class="col"><h1>{{ elem.category }}</h1></div>
+                <div class="col align-self-end"><a href="{{ elem.category.get_absolute_url }}" class="btn btn-my btn-sm float-end mb-2">Cмотреть все</a></div>
+            </div>
+            {% for card in elem.queryset %}
+            <div class="col">
+                <div class="card" style="/*width: 15rem;*/">
+                    {% if card.image %}
+                    <a href="{{ card.product.get_absolute_url }}"><img src="{{ card.image.url }}" class="card-img-top" alt="..."></a>
+                    {% endif %}
+                    <div class="card-body">
+                      <p class="card-text"><small class="text-muted">{#{ card.date_published }#}</small></p>
+                        <h5 class="card-title">{{ card.product.title|truncatewords:2 }}</h5>
+                        <p class="card-text">{{ card.product.cost }} ₽</p>
+                        <div class="row">
+                            <div class="col">
+                                <form action="{% url 'add_prod_in_sc_url' pk=card.product.pk %}" method="post">
+                                    {% csrf_token %}
+                                    <input class="btn btn-my w-100 mb-2" type="submit" {% for product in products_in_sc %}{% if card.product.pk == product.product.pk %}disabled{% else %} {% endif %}{% endfor %} value="В корзину">
+                                </form>
+                            </div>
+                            {#% if request.user.is_authenticated %#}
+                            {#% endif %#}
+                        </div>
+                  </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+    </div>
+</section>
+
+
+{% endblock %}

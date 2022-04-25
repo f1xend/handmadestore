@@ -1,0 +1,46 @@
+{% extends 'main/base_admin.html' %}
+{% load static %}
+
+{% block title %}
+   Админ-панель
+{% endblock %}
+
+{% block content %}
+<section class="mt-5">
+    <div class="container">
+          <div class="row">
+            <div class="col text-center">
+              <div class="jumbotron">
+                <h1 class="display-4">Заказы</h1>
+                <hr class="my-4">
+                <p class="lead">Всего заказов в системе: {{ orders_count }}</p>
+                <p class="lead">
+                  <a class="btn btn-my btn-lg" href="{% url 'admin_panel_orders_url' %}" role="button">Подробнее</a>
+                </p>
+              </div>
+            </div>
+            <div class="col text-center">
+              <div class="jumbotron">
+                <h1 class="display-4">Клиенты</h1>
+                <hr class="my-4">
+                <p class="lead">Всего клиентов в системе: {{ users_count }}</p>
+                <p class="lead">
+                  <a class="btn btn-my btn-lg" href="{% url 'admin_panel_users_url' %}" role="button">Подробнее</a>
+                </p>
+              </div>
+            </div>
+          </div>
+            <div class="mt-5 col text-center">
+              <div class="jumbotron">
+                <h1 class="display-4">Товары</h1>
+                <hr class="my-4">
+                <p class="lead">Всего товаров в системе: {{ products_count }}</p>
+                <p class="lead">
+                  <a class="btn btn-my btn-lg" href="{% url 'admin_panel_products_url' %}" role="button">Подробнее</a>
+                </p>
+              </div>
+            </div>
+          </div>
+    </div>
+</section>
+{% endblock %}

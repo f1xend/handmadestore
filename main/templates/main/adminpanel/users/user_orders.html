@@ -1,0 +1,46 @@
+{% extends 'main/base_admin.html' %}
+{% load static %}
+
+{% block title %}
+   Личный кабинет | {{ request.user.surname }} {{ request.user.first_name }}
+{% endblock %}
+
+{% block content %}
+<section class="mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            {% if not orders %}
+                <h1 class="mt-4">Заказов в данный момент нет!</h1>
+            {% else %}
+            <div class="row row-cols-1 row-cols-md-3 g-3">
+                {% for order in orders_p.object_list %}
+                <div class="col">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">Заказ №{{ order.pk }}</h5>
+                    <p class="card-text">Дата заказа: {{ order.date_created }}</p>
+                    <p class="card-text">Трек номер: {% if order.track_num %}{{ order.track_num }}{% else %}информация появится позже{% endif %}</p>
+                    <p class="card-text">Сумма заказа: {{ order.amount }}</p>
+                      <div class="col"><a href="{% url 'admin_panel_order_url' pk=order.pk %}" class="btn btn-my btn-sm float-end">Подробнее</a></div>
+                  </div>
+                </div>
+              </div>
+                {% endfor %}
+
+            </div>
+              <nav aria-label="Page navigation example">
+              <ul class="pagination justify-content-center">
+                {% for n in orders_p.paginator.page_range %}
+                {% if orders_p.number == n%}
+                  <li class="page-item active"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+                {% else %}
+                  <li class="page-item"><a class="page-link" href="?page={{ n }}">{{ n }}</a></li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

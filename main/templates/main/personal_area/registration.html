@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+   Регистрация
+{% endblock %}
+
+{% block content %}
+<section class="mt-3">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-4 mb-1">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <input required class="form-check-input" type="checkbox" value="">
+                    <label required class="form-check-label">
+                      Нажимая на кнопку вы даете <a href="#">согласие</a> на обработку персональных данных
+                    </label>
+                    <button type="submit" class="btn btn-my w-100 mt-2">Войти</button>
+                </form>
+                <hr>
+                Уже есть аккаунт? <a href="{% url 'login_url' %}">Авторизуйтесь!</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

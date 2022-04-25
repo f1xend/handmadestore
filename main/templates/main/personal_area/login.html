@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}
+   Вход в личный кабинет
+{% endblock %}
+
+{% block content %}
+<section class="mt-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-3 mb-1">
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-my w-100">Войти</button>
+                </form>
+                <hr>
+                Нет аккаунта? <a href="{% url 'registration_url' %}">Зарегистрируйтесь!</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
